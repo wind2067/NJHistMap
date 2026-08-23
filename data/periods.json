@@ -1,0 +1,56 @@
+[
+  {
+    "name": "魏晋",
+    "start": 211,
+    "end": 420,
+    "color": "#4A7C59"
+  },
+  {
+    "name": "南北朝",
+    "start": 420,
+    "end": 589,
+    "color": "#3D5A6C"
+  },
+  {
+    "name": "隋唐",
+    "start": 589,
+    "end": 937,
+    "color": "#B8860B"
+  },
+  {
+    "name": "五代",
+    "start": 937,
+    "end": 975,
+    "color": "#2D4A3E"
+  },
+  {
+    "name": "宋元",
+    "start": 975,
+    "end": 1368,
+    "color": "#5B4B6E"
+  },
+  {
+    "name": "明朝",
+    "start": 1368,
+    "end": 1644,
+    "color": "#A0331E"
+  },
+  {
+    "name": "清朝",
+    "start": 1644,
+    "end": 1912,
+    "color": "#1B3A5C"
+  },
+  {
+    "name": "民国",
+    "start": 1912,
+    "end": 1949,
+    "color": "#8B7E6B"
+  },
+  {
+    "name": "现代",
+    "start": 1949,
+    "end": 2025,
+    "color": "#2D7A5F"
+  }
+]

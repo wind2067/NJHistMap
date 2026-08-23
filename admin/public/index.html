@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HistMap 管理面板</title>
+  <link rel="stylesheet" href="css/admin.css?v=20260822b">
+</head>
+<body>
+  <header class="admin-header">
+    <div class="header-left">
+      <span class="header-logo">山</span>
+      <h1>HistMap 管理面板</h1>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-primary" id="btn-export">导出 JSON</button>
+      <a class="btn btn-outline" href="../index.html" target="_blank">预览地图</a>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="points">文脉点位</button>
+    <button class="tab" data-tab="periods">朝代定义</button>
+  </nav>
+
+  <!-- Points Tab -->
+  <div class="tab-content active" id="tab-points">
+    <div class="toolbar">
+      <button class="btn btn-primary" id="btn-add-point">+ 新增点位</button>
+      <span class="toolbar-info" id="points-info"></span>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>图片</th>
+            <th>名称</th>
+            <th>朝代</th>
+            <th>类别</th>
+            <th>年份</th>
+            <th>地址</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="points-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Periods Tab -->
+  <div class="tab-content" id="tab-periods">
+    <div class="toolbar">
+      <button class="btn btn-primary" id="btn-add-period">+ 新增朝代</button>
+      <span class="toolbar-info" id="periods-info"></span>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>起始年</th>
+            <th>终止年</th>
+            <th>颜色</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="periods-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Point Modal -->
+  <div class="modal-overlay" id="point-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="point-modal-title">新增点位</h2>
+        <button class="modal-close" id="point-modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="point-form">
+          <input type="hidden" id="point-id">
+          <div class="form-row">
+            <div class="form-group">
+              <label>名称 <span class="req">*</span></label>
+              <input type="text" id="point-name" required placeholder="如：鸡鸣寺_示例">
+            </div>
+            <div class="form-group">
+              <label>朝代 <span class="req">*</span></label>
+              <select id="point-dynasty" required></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>起始年份</label>
+              <input type="number" id="point-year-start" placeholder="如：300">
+            </div>
+            <div class="form-group">
+              <label>终止年份</label>
+              <input type="number" id="point-year-end" placeholder="如：2025">
+            </div>
+            <div class="form-group">
+              <label>类别</label>
+              <input type="text" id="point-category" placeholder="如：寺庙、陵墓、园林">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>纬度 (lat)</label>
+              <input type="number" step="any" id="point-lat" placeholder="32.0648">
+            </div>
+            <div class="form-group">
+              <label>经度 (lng)</label>
+              <input type="number" step="any" id="point-lng" placeholder="118.8126">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>地址</label>
+            <input type="text" id="point-address" placeholder="南京市玄武区鸡鸣寺路1号">
+          </div>
+          <div class="form-group">
+            <label>配图</label>
+            <div class="image-upload">
+              <input type="text" id="point-image" placeholder="文件名，如 jimingsi.jpg">
+              <input type="file" id="point-image-file" accept="image/*" style="display:none">
+              <button type="button" class="btn btn-sm btn-outline" id="btn-upload-image">上传图片</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>文字说明 <span class="hint">支持 Markdown 链接 [文字](URL)</span></label>
+            <textarea id="point-description" rows="5" placeholder="鸡鸣寺始建于西晋...详见[百度百科](https://...)"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="point-cancel">取消</button>
+            <button type="submit" class="btn btn-primary">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Period Modal -->
+  <div class="modal-overlay" id="period-modal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2 id="period-modal-title">新增朝代</h2>
+        <button class="modal-close" id="period-modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="period-form">
+          <input type="hidden" id="period-id">
+          <div class="form-group">
+            <label>名称 <span class="req">*</span></label>
+            <input type="text" id="period-name" required placeholder="如：六朝">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>起始年份</label>
+              <input type="number" id="period-start" placeholder="222">
+            </div>
+            <div class="form-group">
+              <label>终止年份</label>
+              <input type="number" id="period-end" placeholder="589">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>颜色</label>
+            <input type="color" id="period-color" value="#1B4F72">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="period-cancel">取消</button>
+            <button type="submit" class="btn btn-primary">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Image Preview -->
+  <div class="image-preview-overlay" id="image-preview">
+    <img id="image-preview-img" src="" alt="preview">
+  </div>
+
+  <script src="js/admin.js?v=20260822b"></script>
+</body>
+</html>

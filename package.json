@@ -1,0 +1,10 @@
+{
+  "name": "histmap",
+  "version": "1.0.0",
+  "description": "南京文脉追踪地图网站",
+  "scripts": {
+    "admin": "node admin/server.js",
+    "start": "node admin/server.js"
+  },
+  "license": "MIT"
+}
