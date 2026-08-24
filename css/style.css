@@ -474,8 +474,8 @@ html, body {
   .app-title { font-size: 20px; }
   .bottom-panel {
     max-width: 520px;
-    left: auto;
-    right: 16px;
+    left: calc(50% - 260px);
+    right: auto;
     bottom: 16px;
     border-radius: 12px;
     border: 1px solid var(--shi-qing);
