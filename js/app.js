@@ -9,6 +9,8 @@
   var MAP_ZOOM = 12;
   var MIN_YEAR = 211;
   var MAX_YEAR = 2025;
+  // 站点部署根路径（兼容 GitHub Pages 子路径 /NJHistMap/ 与自定义域名根路径 /）
+  var BASE = location.pathname.replace(/[^/]*$/, '');
 
   /* ===== State ===== */
   var map = null;
@@ -182,7 +184,7 @@
     var imageHtml;
     if (point.image) {
       imageHtml =
-        '<img src="/assets/images/' + point.image + '?v=20260824a" ' +
+        '<img src="' + BASE + 'assets/images/' + point.image + '?v=20260824a" ' +
         'onerror="this.style.display=\'none\'">';
     } else {
       imageHtml = '<span class="pin-empty"></span>'; // no image: plain white circle
@@ -217,7 +219,7 @@
     var color = getDynastyColor(point.dynasty);
     var descHtml = renderMarkdown(point.description);
     var imageHtml = point.image
-      ? '<img class="popup-image" src="/assets/images/' + point.image + '?v=20260824a" onerror="this.style.display=\'none\'">'
+      ? '<img class="popup-image" src="' + BASE + 'assets/images/' + point.image + '?v=20260824a" onerror="this.style.display=\'none\'">'
       : '';
     var yearEndText = point.year_end === 0 ? '至今' : point.year_end + '年';
 
