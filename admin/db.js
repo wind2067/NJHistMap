@@ -18,7 +18,8 @@ db.exec(`
     lng REAL,
     description TEXT,
     image TEXT DEFAULT '',
-    category TEXT DEFAULT ''
+    category TEXT DEFAULT '',
+    channel_qr TEXT DEFAULT ''
   );
   CREATE TABLE IF NOT EXISTS periods (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

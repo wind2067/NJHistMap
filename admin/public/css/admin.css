@@ -232,8 +232,13 @@ body {
 .toast.success { background: var(--shi-lv); }
 .toast.error { background: var(--danger); }
 
-/* ===== Row Thumbnail ===== */
-.td-thumb { text-align: center; width: 40px; }
+/* ===== Row Thumbnail & Table Cols ===== */
+.td-thumb { text-align: center; width: 42px; padding-left: 6px; padding-right: 6px; }
+.td-thumb.td-qr { text-align: right; }
+.td-thumb.td-qr .row-thumb { display: inline-block; vertical-align: middle; }
+.td-action { width: 90px; white-space: nowrap; }
+.td-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-address { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-thumb {
   width: 32px; height: 32px;
   object-fit: cover;

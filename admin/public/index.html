@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HistMap 管理面板</title>
-  <link rel="stylesheet" href="css/admin.css?v=20260822b">
+  <link rel="stylesheet" href="css/admin.css?v=20260904f">
 </head>
 <body>
   <header class="admin-header">
@@ -14,7 +14,7 @@
     </div>
     <div class="header-right">
       <button class="btn btn-primary" id="btn-export">导出 JSON</button>
-      <a class="btn btn-outline" href="../index.html" target="_blank">预览地图</a>
+      <a class="btn btn-outline" href="http://localhost:8080/index.html" target="_blank">查看地图</a>
     </div>
   </header>
 
@@ -40,6 +40,7 @@
             <th>类别</th>
             <th>年份</th>
             <th>地址</th>
+            <th>渠道码</th>
             <th>操作</th>
           </tr>
         </thead>
@@ -128,6 +129,14 @@
             </div>
           </div>
           <div class="form-group">
+            <label>渠道码 <span class="hint">可选，参访渠道二维码图（小程序码/公众号码），保持原图不压缩</span></label>
+            <div class="image-upload">
+              <input type="text" id="point-channel-qr" placeholder="文件名，如 njpresident_qr.png">
+              <input type="file" id="point-channel-qr-file" accept="image/*" style="display:none">
+              <button type="button" class="btn btn-sm btn-outline" id="btn-upload-channel-qr">上传码图</button>
+            </div>
+          </div>
+          <div class="form-group">
             <label>文字说明 <span class="hint">支持 Markdown 链接 [文字](URL)</span></label>
             <textarea id="point-description" rows="5" placeholder="鸡鸣寺始建于西晋...详见[百度百科](https://...)"></textarea>
           </div>
@@ -185,6 +194,6 @@
     <img id="image-preview-img" src="" alt="preview">
   </div>
 
-  <script src="js/admin.js?v=20260822b"></script>
+  <script src="js/admin.js?v=20260904e"></script>
 </body>
 </html>

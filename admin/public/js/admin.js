@@ -36,12 +36,13 @@
         tr.innerHTML =
           '<td>' + p.id + '</td>' +
           '<td class="td-thumb">' + (p.image ? '<img class="row-thumb" src="/assets/images/' + encodeURIComponent(p.image) + '" onerror="this.style.display=\'none\'" data-full="/assets/images/' + encodeURIComponent(p.image) + '">' : '<span class="no-img">-</span>') + '</td>' +
-          '<td>' + esc(p.name) + '</td>' +
+          '<td class="td-name">' + esc(p.name) + '</td>' +
           '<td>' + esc(p.dynasty) + '</td>' +
           '<td>' + esc(p.category || '-') + '</td>' +
           '<td>' + (p.year_start || '?') + ' - ' + (p.year_end === 0 ? '至今' : (p.year_end || '?')) + '</td>' +
-          '<td>' + esc(p.address || '-') + '</td>' +
-          '<td><div class="action-btns">' +
+          '<td class="td-address">' + esc(p.address || '-') + '</td>' +
+          '<td class="td-thumb td-qr">' + (p.channel_qr ? '<img class="row-thumb" src="/assets/images/' + encodeURIComponent(p.channel_qr) + '" onerror="this.style.display=\'none\'" data-full="/assets/images/' + encodeURIComponent(p.channel_qr) + '">' : '<span class="no-img">-</span>') + '</td>' +
+          '<td class="td-action"><div class="action-btns">' +
             '<button class="btn btn-sm btn-edit" data-id="' + p.id + '">编辑</button>' +
             '<button class="btn btn-sm btn-danger" data-id="' + p.id + '">删除</button>' +
           '</div></td>';
@@ -77,6 +78,7 @@
       document.getElementById('point-address').value = p.address || '';
       document.getElementById('point-image').value = p.image || '';
       document.getElementById('point-description').value = p.description || '';
+      document.getElementById('point-channel-qr').value = p.channel_qr || '';
       showModal('point-modal');
     });
   }
@@ -110,6 +112,7 @@
         lng: Math.round(parseFloat(document.getElementById('point-lng').value) * 1e6) / 1e6 || 0,
         address: document.getElementById('point-address').value,
         image: document.getElementById('point-image').value,
+        channel_qr: document.getElementById('point-channel-qr').value,
         description: document.getElementById('point-description').value
       };
 
@@ -147,6 +150,29 @@
           if (res.filename) {
             document.getElementById('point-image').value = res.filename;
             showToast('图片已上传（已压缩）', 'success');
+          }
+        })
+        .catch(function (err) { showToast('上传失败: ' + err.message, 'error'); });
+      e.target.value = '';
+    });
+
+    // Channel QR upload (compress to 128x128 for list, click to preview original sharp)
+    document.getElementById('btn-upload-channel-qr').addEventListener('click', function () {
+      document.getElementById('point-channel-qr-file').click();
+    });
+    document.getElementById('point-channel-qr-file').addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      compressImage(file, 128, 0.92).then(function (blob) {
+        var formData = new FormData();
+        var filename = Date.now() + '_qr.jpg';
+        formData.append('image', blob, filename);
+        return fetch('/api/upload', { method: 'POST', body: formData });
+      }).then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res.filename) {
+            document.getElementById('point-channel-qr').value = res.filename;
+            showToast('码图已上传（128x128）', 'success');
           }
         })
         .catch(function (err) { showToast('上传失败: ' + err.message, 'error'); });

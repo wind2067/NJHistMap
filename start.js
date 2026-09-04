@@ -1,7 +1,7 @@
 const { spawn, execSync } = require('child_process');
 
 const PYTHON = 'C:\\Users\\Lenovo\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe';
-const NODE = 'C:\\Users\\Lenovo\\.workbuddy\\binaries\\node\\versions\\22.22.2\\node.exe';
+const NODE = 'C:\\Users\\Lenovo\\.workbuddy\\binaries\\node\\versions\\22.22.2-2\\node.exe';
 const HISTMAP = 'D:\\AI WorkSpace\\WorkBuddy\\HistMap';
 const ADMIN = 'D:\\AI WorkSpace\\WorkBuddy\\HistMap\\admin';
 

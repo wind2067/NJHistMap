@@ -34,8 +34,8 @@ app.get('/api/points', function (req, res) {
 app.post('/api/points', function (req, res) {
   var b = req.body;
   var info = db.prepare(
-    'INSERT INTO points (name, dynasty, year_start, year_end, address, lat, lng, description, image, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-  ).run(b.name, b.dynasty, b.year_start, b.year_end, b.address, b.lat, b.lng, b.description, b.image || '', b.category || '');
+    'INSERT INTO points (name, dynasty, year_start, year_end, address, lat, lng, description, image, category, channel_qr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(b.name, b.dynasty, b.year_start, b.year_end, b.address, b.lat, b.lng, b.description, b.image || '', b.category || '', b.channel_qr || '');
   exportData();
   res.json({ id: info.lastInsertRowid });
 });
@@ -43,8 +43,8 @@ app.post('/api/points', function (req, res) {
 app.put('/api/points/:id', function (req, res) {
   var b = req.body;
   db.prepare(
-    'UPDATE points SET name=?, dynasty=?, year_start=?, year_end=?, address=?, lat=?, lng=?, description=?, image=?, category=? WHERE id=?'
-  ).run(b.name, b.dynasty, b.year_start, b.year_end, b.address, b.lat, b.lng, b.description, b.image || '', b.category || '', req.params.id);
+    'UPDATE points SET name=?, dynasty=?, year_start=?, year_end=?, address=?, lat=?, lng=?, description=?, image=?, category=?, channel_qr=? WHERE id=?'
+  ).run(b.name, b.dynasty, b.year_start, b.year_end, b.address, b.lat, b.lng, b.description, b.image || '', b.category || '', b.channel_qr || '', req.params.id);
   exportData();
   res.json({ ok: true });
 });
@@ -104,7 +104,8 @@ function exportData() {
       lng: r.lng,
       description: r.description,
       image: r.image || '',
-      category: r.category || ''
+      category: r.category || '',
+      channel_qr: r.channel_qr || ''
     };
   });
 

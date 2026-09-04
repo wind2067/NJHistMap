@@ -170,10 +170,13 @@
     if (!text) return '';
     var html;
     if (typeof marked !== 'undefined') {
-      html = marked.parse(text);
+      // breaks: 单换行即换行（年表类介绍不用空行分段）
+      html = marked.parse(text, { gfm: true, breaks: true });
     } else {
       html = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
     }
+    // 兜底：漏写协议头的裸链接补 https://，避免 href="www.xxx" 被当相对路径
+    html = html.replace(/href="(www\.)/g, 'href="https://$1');
     // open links in new tab
     return html.replace(/<a /g, '<a target="_blank" rel="noopener noreferrer" ');
   }
@@ -222,15 +225,30 @@
       ? '<img class="popup-image" src="' + BASE + 'assets/images/' + point.image + '?v=20260824a" onerror="this.style.display=\'none\'">'
       : '';
     var yearEndText = point.year_end === 0 ? '至今' : point.year_end + '年';
+    var qrHtml = point.channel_qr
+      ? '<div class="popup-channel-qr"><img src="' + BASE + 'assets/images/' + point.channel_qr + '?v=20260904d" alt="渠道码" onerror="this.style.display=\'none\'"></div>'
+      : '';
+    // 导航终点=点位坐标（与底图同为高德坐标系）
+    var amapUrl = 'https://uri.amap.com/navigation?to=' + point.lng + ',' + point.lat + ',' +
+      encodeURIComponent(point.name) + '&mode=car&coordinate=gaode&src=njhistmap';
+    // Android 用 geo: scheme 唤起系统"打开方式"选择器（装了哪些地图就列哪些）；
+    // 桌面端与 iOS 默认走高德网页导航
+    var navUrl = /Android/i.test(navigator.userAgent)
+      ? 'geo:0,0?q=' + point.lat + ',' + point.lng + '(' + encodeURIComponent(point.name) + ')'
+      : amapUrl;
 
     return (
       '<div class="popup-card">' +
         '<span class="popup-dynasty" style="background:' + color + '">' + point.dynasty + '</span>' +
         '<h3 class="popup-name">' + point.name + '</h3>' +
         '<div class="popup-year">' + point.year_start + '年 — ' + yearEndText + '</div>' +
-        '<div class="popup-address">\u{1F4CD} ' + point.address + '</div>' +
+        '<a class="popup-address" href="' + navUrl + '" target="_blank" rel="noopener">' +
+          '<span class="popup-addr-text">\u{1F4CD} ' + point.address + '</span>' +
+          '<span class="popup-nav-hint">导航 ›</span>' +
+        '</a>' +
         imageHtml +
         '<div class="popup-description">' + descHtml + '</div>' +
+        qrHtml +
       '</div>'
     );
   }
@@ -443,9 +461,17 @@
     allChip.className = 'category-chip active';
     allChip.textContent = '全部';
     allChip.addEventListener('click', function () {
-      filter.activeCategories = new Set(allCategories);
       var chips = document.querySelectorAll('.category-chip');
-      chips.forEach(function (c) { c.classList.add('active'); });
+      var allOn = allChip.classList.contains('active');
+      if (allOn) {
+        // 当前全选（"全部"亮着）→ 全取消
+        filter.activeCategories = new Set();
+        chips.forEach(function (c) { c.classList.remove('active'); });
+      } else {
+        // 当前未全选 → 全选
+        filter.activeCategories = new Set(allCategories);
+        chips.forEach(function (c) { c.classList.add('active'); });
+      }
       updateMarkers();
     });
     container.appendChild(allChip);
