@@ -88,6 +88,11 @@
     });
 
     markerLayer = L.layerGroup().addTo(map);
+
+    // 弹窗上拖拽穿透：按住弹窗拖动时地图跟随平移，单击/长按不受影响
+    map.on('popupopen', function (e) {
+      enablePopupDragThrough(e.popup);
+    });
   }
 
   /* ===== Pin Label Zoom Scaling ===== */
@@ -271,6 +276,17 @@
       marker.bindPopup(createPopupContent(point), {
         maxWidth: 300,
         className: 'histmap-popup'
+      });
+
+      // 点击地图针后收起时间轴面板
+      marker.on('click', function () {
+        var panel = document.getElementById('bottom-panel');
+        var toggle = document.getElementById('panel-toggle');
+        if (panel && !panel.classList.contains('collapsed')) {
+          panel.classList.add('collapsed');
+          if (toggle) toggle.classList.add('active');
+          setTimeout(function () { map.invalidateSize(); }, 300);
+        }
       });
 
       markerLayer.addLayer(marker);
@@ -516,6 +532,58 @@
       toggle.classList.toggle('active');
       setTimeout(function () { map.invalidateSize(); }, 300);
     });
+  }
+
+  /* ===== Popup 拖拽穿透 ===== */
+  // 按住弹窗卡片拖动时，把拖拽手势转成地图平移；单击（点链接）与长按（复制文本/保存图片）保持浏览器原生行为
+  function enablePopupDragThrough(popup) {
+    var el = popup.getElement();
+    if (!el || el._dragThrough) return;
+    el._dragThrough = true;
+
+    var THRESHOLD = 10; // px，超过才判定为拖拽
+    var startX = 0, startY = 0, lastX = 0, lastY = 0, dragging = false;
+
+    el.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) { dragging = false; return; }
+      startX = lastX = e.touches[0].clientX;
+      startY = lastY = e.touches[0].clientY;
+      dragging = false;
+    }, { passive: true, capture: true });
+
+    el.addEventListener('touchmove', function (e) {
+      if (e.touches.length !== 1) return;
+      var t = e.touches[0];
+      if (!dragging) {
+        if (Math.abs(t.clientX - startX) + Math.abs(t.clientY - startY) < THRESHOLD) return;
+        dragging = true;
+        map.fire('movestart');
+      }
+      e.preventDefault();
+      var dx = t.clientX - lastX;
+      var dy = t.clientY - lastY;
+      map.panBy([-dx, -dy], { animate: false, noMoveStart: true });
+      clampCenter();
+      lastX = t.clientX;
+      lastY = t.clientY;
+    }, { passive: false, capture: true });
+
+    function endDrag() {
+      dragging = false;
+    }
+    el.addEventListener('touchend', endDrag, { passive: true, capture: true });
+    el.addEventListener('touchcancel', endDrag, { passive: true, capture: true });
+  }
+
+  function clampCenter() {
+    var mb = map.options.maxBounds;
+    if (!mb) return;
+    var c = map.getCenter();
+    var lat = Math.max(mb.getSouth(), Math.min(mb.getNorth(), c.lat));
+    var lng = Math.max(mb.getWest(), Math.min(mb.getEast(), c.lng));
+    if (lat !== c.lat || lng !== c.lng) {
+      map.setView([lat, lng], map.getZoom(), { animate: false });
+    }
   }
 
   /* ===== Start ===== */
